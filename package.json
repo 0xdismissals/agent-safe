@@ -1,0 +1,36 @@
+{
+  "name": "agent-safe",
+  "version": "0.1.0",
+  "description": "Safe Wallet Skill POC for OpenClaw/ClawDBot on Base",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "keywords": [
+    "safe",
+    "gnosis",
+    "wallet",
+    "base",
+    "ethereum"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@safe-global/api-kit": "^2.5.4",
+    "@safe-global/protocol-kit": "^5.0.4",
+    "@safe-global/types-kit": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
