@@ -27,11 +27,20 @@ export class SafeTxServiceClient {
     private apiKit: SafeApiKit;
 
     constructor(chainId: bigint, txServiceUrl?: string) {
+        console.log(`[SafeTxServiceClient] Initializing for chain ${chainId} with URL: ${txServiceUrl || 'AUTO-DISCOVER'}`);
         const ApiKit = (SafeApiKit as any).default || SafeApiKit;
         this.apiKit = new ApiKit({
             chainId,
             txServiceUrl,
         });
+
+        // SDK Internals check (might work for some versions)
+        try {
+            const apiKitAny = this.apiKit as any;
+            if (apiKitAny.txServiceUrl) {
+                console.log(`[SafeTxServiceClient] SDK resolved txServiceUrl: ${apiKitAny.txServiceUrl}`);
+            }
+        } catch (e) { }
     }
 
     /**
@@ -55,13 +64,27 @@ export class SafeTxServiceClient {
         senderAddress: Address,
         senderSignature: Hex
     ): Promise<void> {
-        await this.apiKit.proposeTransaction({
-            safeAddress,
-            safeTransactionData,
-            safeTxHash,
-            senderAddress,
-            senderSignature,
-        });
+        console.log(`[SafeTxServiceClient] Proposing transaction for Safe: ${safeAddress}`);
+        console.log(`[SafeTxServiceClient] Sender: ${senderAddress}`);
+        console.log(`[SafeTxServiceClient] SafeTxHash: ${safeTxHash}`);
+
+        try {
+            await this.apiKit.proposeTransaction({
+                safeAddress,
+                safeTransactionData,
+                safeTxHash,
+                senderAddress,
+                senderSignature,
+            });
+            console.log(`[SafeTxServiceClient] Transaction proposed successfully!`);
+        } catch (error: any) {
+            console.error(`[SafeTxServiceClient] Proposal failed with error:`, error.message);
+            if (error.response) {
+                console.error(`[SafeTxServiceClient] Response status:`, error.response.status);
+                console.error(`[SafeTxServiceClient] Response data:`, JSON.stringify(error.response.data, null, 2));
+            }
+            throw error;
+        }
     }
 
     /**

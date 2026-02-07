@@ -17,7 +17,6 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         name: 'Base Sepolia',
         chainId: 84532n,
         rpcUrl: 'https://sepolia.base.org',
-        safeTxServiceUrl: 'https://api.safe.global/tx-service/basesep',
         tokens: [
             { symbol: 'USDC', address: '0x036CbD53842c5426634e7929541eC2318f3dCF7e', decimals: 6 },
             { symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18 },
