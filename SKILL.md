@@ -8,13 +8,23 @@ Creates an agent EOA, deploys a 2/3 or n/m Safe (Gnosis Safe) on **13+ supported
 - **Node.js 18+** must be installed on the system
 - If using nvm, source it first: `source ~/.nvm/nvm.sh`
 
-## Project Location
+## Setup & Installation
+
+To get started, clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/0xdismissals/agent-safe
+cd agent-safe
+npm install
+```
+
+### Project Location
 
 ``` 
 [PROJECT_ROOT]  (e.g., /home/user/agent-safe)
 ```
 
-Run these commands to install dependencies:
+Run these commands to ensure everything is set up:
 
 ```bash
 source ~/.nvm/nvm.sh 2>/dev/null || true
