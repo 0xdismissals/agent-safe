@@ -41,7 +41,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         name: 'Base',
         chainId: 8453n,
         rpcUrl: 'https://mainnet.base.org',
-        safeTxServiceUrl: 'https://safe-transaction-base.safe.global',
+        safeTxServiceUrl: 'https://safe-transaction-base.safe.global/api',
         llamaChainName: 'Base',
         tokens: [
             { symbol: 'USDC', address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', decimals: 6 },
