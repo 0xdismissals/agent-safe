@@ -127,6 +127,14 @@ export class SafeWalletSkill {
     }
 
     /**
+     * safe.get_yields() - Get top yield opportunities from DefiLlama
+     */
+    async safeGetYields() {
+        const ops = await this.ensureOperations();
+        return ops.getYieldSummary();
+    }
+
+    /**
      * safe.propose_send_eth(to, amountEth) - Propose ETH transfer
      */
     async safeProposeSendETH(to: Address, amountEth: string) {
@@ -365,6 +373,18 @@ async function main() {
         return;
     }
 
+    if (commandArg === 'yields' || commandArg === 'get_yields') {
+        console.log('Fetching top yield opportunities from DefiLlama...');
+        try {
+            await skill.init();
+            const result = await skill.safeGetYields();
+            console.log('\n' + result);
+        } catch (e: any) {
+            console.error('\nError:', e.message);
+        }
+        return;
+    }
+
     if (commandArg === 'deposit') {
         const token = args.find((_, i) => args[i - 1] === '--token') || 'USDC';
         const amount = args.find((_, i) => args[i - 1] === '--amount') || '1';
@@ -510,6 +530,7 @@ async function main() {
         console.log('- skill.safeAaveWithdraw(token, amount)');
         console.log('- skill.safeAaveFaucet(token, amount)');
         console.log('- skill.safeProposeSwap(from, to, amount)');
+        console.log('- skill.safeGetYields()');
         console.log('- skill.safeWrapETH(amount)');
         console.log('- skill.safeUnwrapWETH(amount)');
     }

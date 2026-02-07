@@ -25,6 +25,7 @@ export interface ChainConfig {
     chainId: bigint;
     rpcUrl: string;
     safeTxServiceUrl?: string;
+    llamaChainName?: string;
     tokens: TokenConfig[];
     services: {
         uniswap?: UniswapConfig;

@@ -4,6 +4,7 @@ import { SafeService } from '../services/SafeService.js';
 import { SafeTxServiceClient } from '../services/SafeTxServiceClient.js';
 import { UniswapService, type SwapQuoteResult } from '../services/UniswapService.js';
 import { AaveService } from '../services/AaveService.js';
+import { YieldService } from '../services/YieldService.js';
 import { StateManager } from '../state/StateManager.js';
 import { ProposalStatus, type Proposal } from '../state/types.js';
 import { type ChainConfig } from '../types.js';
@@ -47,6 +48,7 @@ export class SafeOperations {
     private txServiceClient: SafeTxServiceClient;
     private uniswapService: UniswapService;
     private aaveService: AaveService;
+    private yieldService: YieldService;
     private safeAddress: Address;
     private agentAddress: Address;
 
@@ -69,6 +71,7 @@ export class SafeOperations {
         this.balanceService = new BalanceService(config.rpcUrl, config.chainId, mergedTokens);
         this.safeService = new SafeService(agentPrivateKey);
         this.txServiceClient = new SafeTxServiceClient(config.chainId, config.safeTxServiceUrl);
+        this.yieldService = new YieldService();
 
         // Initialize optional services
         if (config.services.uniswap) {
@@ -796,5 +799,19 @@ export class SafeOperations {
             hash,
             message: `✓ Requested ${amount} ${tokenInfo.symbol} from Aave Faucet.\n\nTransaction Hash: ${hash}\nTokens are being minted directly to the Safe: ${this.safeAddress}`,
         };
+    }
+
+    /**
+     * Get a yield opportunity summary from DefiLlama for supported tokens
+     */
+    async getYieldSummary(): Promise<string> {
+        if (!this.config.llamaChainName) {
+            return "Yield data lookup not configured for this chain.";
+        }
+
+        const mergedTokens = this.stateManager.getTokens(this.config.chainId, this.config.tokens);
+        const symbols = mergedTokens.map(t => t.symbol);
+
+        return this.yieldService.getYieldSummary(this.config.llamaChainName, symbols);
     }
 }

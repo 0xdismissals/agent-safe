@@ -17,6 +17,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         name: 'Base Sepolia',
         chainId: 84532n,
         rpcUrl: 'https://sepolia.base.org',
+        llamaChainName: 'Base',
         tokens: [
             { symbol: 'USDC', address: '0x036CbD53842c5426634e7929541eC2318f3dCF7e', decimals: 6 },
             { symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18 },
@@ -41,6 +42,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 8453n,
         rpcUrl: 'https://mainnet.base.org',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/base',
+        llamaChainName: 'Base',
         tokens: [
             { symbol: 'USDC', address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', decimals: 6 },
             { symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18 },
@@ -64,6 +66,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 1n,
         rpcUrl: 'https://eth.llamarpc.com',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/mainnet',
+        llamaChainName: 'Ethereum',
         tokens: [
             { symbol: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 },
             { symbol: 'WETH', address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', decimals: 18 },
@@ -87,6 +90,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 10n,
         rpcUrl: 'https://mainnet.optimism.io',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/optimism',
+        llamaChainName: 'Optimism',
         tokens: [
             { symbol: 'USDC', address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', decimals: 6 },
             { symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18 },
@@ -110,6 +114,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 42161n,
         rpcUrl: 'https://arb1.arbitrum.io/rpc',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/arbitrum',
+        llamaChainName: 'Arbitrum',
         tokens: [
             { symbol: 'USDC', address: '0xaf88d065e77c8cC2239326C0369123fe564597d8', decimals: 6 },
             { symbol: 'WETH', address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1', decimals: 18 },
@@ -133,6 +138,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 137n,
         rpcUrl: 'https://polygon-rpc.com',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/polygon',
+        llamaChainName: 'Polygon',
         tokens: [
             { symbol: 'USDC', address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', decimals: 6 },
             { symbol: 'WETH', address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', decimals: 18 },
@@ -156,6 +162,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 56n,
         rpcUrl: 'https://bsc-dataseed.binance.org/',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/bsc',
+        llamaChainName: 'BSC',
         tokens: [
             { symbol: 'USDC', address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', decimals: 18 },
             { symbol: 'WETH', address: '0x2170Ed0880ac9A755fd29B2688956BD959F933F8', decimals: 18 },
@@ -179,6 +186,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 100n,
         rpcUrl: 'https://rpc.gnosischain.com/',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/gnosis-chain',
+        llamaChainName: 'Gnosis',
         tokens: [
             { symbol: 'USDC', address: '0xddafbb505ad214d4b2e9e996e382b3c050a6122d', decimals: 6 },
             { symbol: 'WETH', address: '0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1', decimals: 18 },
@@ -196,6 +204,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         chainId: 43114n,
         rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
         safeTxServiceUrl: 'https://api.safe.global/tx-service/avalanche',
+        llamaChainName: 'Avalanche',
         tokens: [
             { symbol: 'USDC', address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', decimals: 6 },
             { symbol: 'WETH', address: '0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB', decimals: 18 },
@@ -212,6 +221,7 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         name: 'Unichain',
         chainId: 130n,
         rpcUrl: 'https://mainnet.unichain.org',
+        llamaChainName: 'Unichain',
         tokens: [
             { symbol: 'WETH', address: '0x4200000000000000000000000000000000000006', decimals: 18 },
         ],
