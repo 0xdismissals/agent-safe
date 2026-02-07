@@ -1,4 +1,4 @@
-import { type Address, type Hex, encodeFunctionData, parseUnits, formatUnits, createPublicClient, http, defineChain } from 'viem';
+import { getAddress, type Address, type Hex, encodeFunctionData, parseUnits, formatUnits, createPublicClient, http, defineChain } from 'viem';
 import { type UniswapConfig, type TokenConfig } from '../types.js';
 import { ERC20_ABI, WETH_ABI } from '../abis.js';
 
@@ -135,12 +135,12 @@ export class UniswapService {
         );
 
         if (token) {
-            return { address: token.address, decimals: token.decimals, symbol: token.symbol };
+            return { address: getAddress(token.address), decimals: token.decimals, symbol: token.symbol };
         }
 
         // Assume it's an address with 18 decimals
         return {
-            address: tokenSymbolOrAddress as Address,
+            address: getAddress(tokenSymbolOrAddress),
             decimals: 18,
             symbol: 'TOKEN',
         };
@@ -177,7 +177,7 @@ export class UniswapService {
         fromToken: string,
         toToken: string,
         amount: string,
-        fee: number = this.config.defaultPoolFee || 3000
+        fee?: number
     ): Promise<SwapQuoteResult> {
         const tokenIn = this.resolveToken(fromToken);
         const tokenOut = this.resolveToken(toToken);
@@ -185,58 +185,69 @@ export class UniswapService {
         // Parse amount to raw units
         const amountInRaw = parseUnits(amount, tokenIn.decimals);
 
-        // Check if pool exists
-        const pool = await this.getPool(tokenIn.address, tokenOut.address, fee);
-        if (!pool) {
-            throw new Error(`No Uniswap pool exists for ${tokenIn.symbol}/${tokenOut.symbol} with fee ${fee / 10000}%`);
+        // Fee tiers to try if not specified
+        const feeTiers = fee ? [fee] : [500, 3000, 10000];
+        let lastError: Error | null = null;
+
+        for (const currentFee of feeTiers) {
+            try {
+                // Check if pool exists
+                const pool = await this.getPool(tokenIn.address, tokenOut.address, currentFee);
+                if (!pool) continue;
+
+                // Get quote using QuoterV2
+                const result = await this.client.simulateContract({
+                    address: getAddress(this.config.quoterV2),
+                    abi: QUOTER_V2_ABI,
+                    functionName: 'quoteExactInputSingle',
+                    args: [{
+                        tokenIn: tokenIn.address,
+                        tokenOut: tokenOut.address,
+                        amountIn: amountInRaw,
+                        fee: currentFee,
+                        sqrtPriceLimitX96: 0n,
+                    }],
+                });
+
+                const [amountOut, , , gasEstimate] = result.result;
+
+                // Calculate minimum output with slippage
+                const slippageMultiplier = BigInt(Math.floor((100 - this.defaultSlippagePercent) * 100));
+                const amountOutMin = (amountOut * slippageMultiplier) / 10000n;
+
+                return {
+                    fromToken: {
+                        symbol: tokenIn.symbol,
+                        address: tokenIn.address,
+                        amount,
+                        amountRaw: amountInRaw.toString(),
+                    },
+                    toToken: {
+                        symbol: tokenOut.symbol,
+                        address: tokenOut.address,
+                        amount: formatUnits(amountOut, tokenOut.decimals),
+                        amountMin: formatUnits(amountOutMin, tokenOut.decimals),
+                        amountRaw: amountOut.toString(),
+                        amountMinRaw: amountOutMin.toString(),
+                    },
+                    poolFee: currentFee,
+                    gasEstimate: gasEstimate.toString(),
+                };
+            } catch (error: any) {
+                console.warn(`[UniswapService] Failed to get quote for ${currentFee / 10000}% fee:`, error.message);
+                lastError = error;
+                // Try next fee tier
+            }
         }
 
-        // Get quote using QuoterV2 (simulate call)
-        try {
-            const result = await this.client.simulateContract({
-                address: this.config.quoterV2,
-                abi: QUOTER_V2_ABI,
-                functionName: 'quoteExactInputSingle',
-                args: [{
-                    tokenIn: tokenIn.address,
-                    tokenOut: tokenOut.address,
-                    amountIn: amountInRaw,
-                    fee,
-                    sqrtPriceLimitX96: 0n,
-                }],
-            });
-
-            const [amountOut, , , gasEstimate] = result.result;
-
-            // Calculate minimum output with slippage
-            const slippageMultiplier = BigInt(Math.floor((100 - this.defaultSlippagePercent) * 100));
-            const amountOutMin = (amountOut * slippageMultiplier) / 10000n;
-
-            return {
-                fromToken: {
-                    symbol: tokenIn.symbol,
-                    address: tokenIn.address,
-                    amount,
-                    amountRaw: amountInRaw.toString(),
-                },
-                toToken: {
-                    symbol: tokenOut.symbol,
-                    address: tokenOut.address,
-                    amount: formatUnits(amountOut, tokenOut.decimals),
-                    amountMin: formatUnits(amountOutMin, tokenOut.decimals),
-                    amountRaw: amountOut.toString(),
-                    amountMinRaw: amountOutMin.toString(),
-                },
-                poolFee: fee,
-                gasEstimate: gasEstimate.toString(),
-            };
-        } catch (error: any) {
-            // Handle specific errors
-            if (error.message?.includes('SPL')) {
+        if (lastError) {
+            if (lastError.message?.includes('SPL')) {
                 throw new Error(`Swap would exceed price limits. Try a smaller amount.`);
             }
-            throw new Error(`Failed to get quote: ${error.message}`);
+            throw new Error(`Failed to get quote after trying fee tiers ${feeTiers.join(', ')}: ${lastError.message}`);
         }
+
+        throw new Error(`No Uniswap pool exists for ${tokenIn.symbol}/${tokenOut.symbol} across fee tiers ${feeTiers.map(f => f / 10000 + '%').join(', ')}`);
     }
 
     /**
@@ -269,7 +280,7 @@ export class UniswapService {
      * Get the swap router address
      */
     getSwapRouterAddress(): Address {
-        return this.config.swapRouter;
+        return getAddress(this.config.swapRouter);
     }
 
     /**

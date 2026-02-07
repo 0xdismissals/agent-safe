@@ -443,6 +443,21 @@ async function main() {
         return;
     }
 
+    if (commandArg === 'swap' || commandArg === 'propose_swap') {
+        const fromToken = args.find((_, i) => args[i - 1] === '--from') || 'ETH';
+        const toToken = args.find((_, i) => args[i - 1] === '--to') || 'USDC';
+        const amount = args.find((_, i) => args[i - 1] === '--amount') || '0.0001';
+        console.log(`Proposing swap: ${amount} ${fromToken} -> ${toToken}...`);
+        try {
+            await skill.init();
+            const result = await skill.safeProposeSwap(fromToken, toToken, amount);
+            console.log('\nResult:', JSON.stringify(result, null, 2));
+        } catch (e: any) {
+            console.error('\nError:', e.message);
+        }
+        return;
+    }
+
     if (commandArg === 'add_token') {
         const symbol = args.find((_, i) => args[i - 1] === '--symbol') || args.find((_, i) => args[i - 1] === '--token');
         const address = args.find((_, i) => args[i - 1] === '--address') as Address;

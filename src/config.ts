@@ -49,9 +49,9 @@ export const SUPPORTED_CHAINS: Record<string, ChainConfig> = {
         ],
         services: {
             uniswap: {
-                swapRouter: '0x2626664c26023396193714A6F62EcA190740Fc03',
-                quoterV2: '0x3d4e44Eb17746167C55F04815F100Ae440AD0101',
-                factory: '0x33128a8fC170d56ED8068699e16bD4416954605f',
+                swapRouter: '0x2626664c2603336E57B271c5C0b26F421741e481',
+                quoterV2: '0x3d4e44Eb1374240CE5F1B871ab261CD16335B76a',
+                factory: '0x33128a8fC17869897dcE68Ed026d694621f6FDfD',
                 weth: '0x4200000000000000000000000000000000000006',
             },
             aave: {
